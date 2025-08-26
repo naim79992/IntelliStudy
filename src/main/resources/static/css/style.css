@@ -72,7 +72,6 @@
 }
 
   body {padding-top:90px;} /* for fixed navbar */
-  footer {position:fixed; bottom:0; width:100%; height:70px;}
   .section-header {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       font-weight: 700;
@@ -104,4 +103,15 @@
   .navbar-nav .nav-link.active {
     color: #FFD700 !important; /* yellow */
     font-weight: 600;           /* optional bold */
+}
+
+footer {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 100;
+    font-size: 1.6rem;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    letter-spacing: 1px;
+    position:fixed; bottom:0; width:100%; height:70px;
 }
