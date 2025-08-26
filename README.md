@@ -44,10 +44,6 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
 * **Backend**: Java 21,Spring Boot 3, Gemini API, Git
 * **Frontend**: HTML, CSS, Bootstrap, JavaScript
 
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome
-
 
 
 
@@ -59,6 +55,10 @@ Contributions, issues, and feature requests are welcome
 <img width="1896" height="895" alt="5  Quiz by text" src="https://github.com/user-attachments/assets/c85cf651-846e-493d-99fc-a953e589e216" />
 <img width="1900" height="883" alt="5 2 Quiz by text" src="https://github.com/user-attachments/assets/d68af7f1-8b97-4e85-a3eb-fef29808b9fa" />
 
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome
 
 
 
