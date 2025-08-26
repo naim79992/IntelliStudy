@@ -1,6 +1,4 @@
-Here’s a polished **README.md** for your project:
 
-````markdown
 # IntelliStudy
 
 IntelliStudy is an AI-powered learning assistant that helps users interact with text in smarter ways. With this tool, you can ask questions, summarize long passages, translate content into Bangla, and even generate quizzes to test your knowledge.  
@@ -12,7 +10,7 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
 - **Translate to Bangla** – Translate any English text into Bangla.  
 - **Generate Quiz from Text** – Upload or paste text, and automatically create quizzes.  
 - **Generate Quiz from Topic** – Create topic-based quizzes without needing text input.  
-- **Take Quiz (MCQs)** – Attempt quizzes with multiple-choice questions.  
+- **Take Quiz (MCQs)** – Attempt quizzes of Generate Quiz from Text or Topic with multiple-choice questions.  
 - **Submit & Get Answers** – After submission, instantly check correct answers and scores.  
 
 ## 🚀 Getting Started 
@@ -22,15 +20,13 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
    ```bash
    git clone https://github.com/your-username/intellistudy.git
    cd intellistudy
-````
 
-2. Configure your database in `application.properties`.
-3. Run the Spring Boot application:
+2. Run the Spring Boot application:
 
    ```bash
    mvn spring-boot:run
    ```
-4. Access the app at:
+3. Access the app at:
 
    ```
    http://localhost:8080
@@ -52,7 +48,6 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
 
 Contributions, issues, and feature requests are welcome
 
-```
 
 
 
@@ -63,6 +58,7 @@ Contributions, issues, and feature requests are welcome
 <img width="1892" height="897" alt="4 2 quiz by topic" src="https://github.com/user-attachments/assets/5bdd2d74-0c63-47e1-960c-d8f65a7214e5" />
 <img width="1896" height="895" alt="5  Quiz by text" src="https://github.com/user-attachments/assets/c85cf651-846e-493d-99fc-a953e589e216" />
 <img width="1900" height="883" alt="5 2 Quiz by text" src="https://github.com/user-attachments/assets/d68af7f1-8b97-4e85-a3eb-fef29808b9fa" />
+
 
 
 
