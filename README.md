@@ -61,7 +61,7 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
 ## Attempt Quiz & Get result
 <img width="1892" height="897" alt="4 2 quiz by topic" src="https://github.com/user-attachments/assets/5bdd2d74-0c63-47e1-960c-d8f65a7214e5" /> 
 
-## Quiz generate from geven text
+## Quiz generate from given text
 <img width="1896" height="895" alt="5  Quiz by text" src="https://github.com/user-attachments/assets/c85cf651-846e-493d-99fc-a953e589e216" />
 
 ## Attempt Quiz & Get result
@@ -71,6 +71,7 @@ IntelliStudy is an AI-powered learning assistant that helps users interact with 
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome
+
 
 
 
