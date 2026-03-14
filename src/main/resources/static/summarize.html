@@ -1,54 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IntelliStudy - Summarize</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/summarize.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliStudy — Summarize</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary text-white fixed-top" style="height:80px;">
-
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">IntelliStudy</a>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="index.html">Ask</a></li>
-                <li class="nav-item"><a class="nav-link active" href="summarize.html">Summarize</a></li>
-                <li class="nav-item"><a class="nav-link" href="translate.html">Translate</a></li>
-                <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz by Topic</a></li>
-                <li class="nav-item"><a class="nav-link" href="quiz-text.html">Quiz from Text</a></li>
-        </ul>
-    </div>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="brand-icon">🧠</span>IntelliStudy</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="rag.html" class="nav-link">PDF Chat</a></li>
+      <li><a href="summarize.html" class="nav-link active">Summarize</a></li>
+      <li><a href="translate.html" class="nav-link">Translate</a></li>
+      <li><a href="quiz.html" class="nav-link">Quiz</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
 </nav>
 
-<div class="container my-5">
-    <h1 class="mb-4 text-center">Summarize Your Text</h1>
-    <textarea id="summarizeInput" class="form-control mb-3" rows="5" placeholder="Enter text to summarize..."></textarea>
-    <button class="btn btn-success" onclick="callSummarize()">Summarize</button>
-    <pre class="mt-3" id="summarizeOutput"></pre>
+<div class="container" style="padding-bottom:80px;">
+  <div class="page-header">
+    <div class="section-label">AI TOOL</div>
+    <h1>Text Summarizer ✨</h1>
+    <p>Paste any long text and get a clear, concise summary in seconds.</p>
+  </div>
+
+  <!-- MCP Panel -->
+  <div class="mcp-panel" style="max-width:780px;margin:0 auto 28px;">
+    <div class="mcp-header">
+      <span style="font-size:18px;">🔌</span>
+      <h3 style="font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;color:var(--purple);margin:0;">MCP: Summarizer Tool</h3>
+      <span class="mcp-badge">ACTIVE</span>
+    </div>
+    <div class="mcp-tools">
+      <span class="mcp-tool-chip active"><i class="fas fa-compress-alt"></i> Text Condenser</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-list-ul"></i> Bullet Points</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-lightbulb"></i> Key Insights</span>
+    </div>
+    <div class="mcp-status"><span class="dot-green"></span>Uses Gemini 2.5 Flash · Structured output with key points + conclusion</div>
+  </div>
+
+  <div style="max-width:780px;margin:0 auto;">
+    <div class="input-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <label style="color:var(--text-secondary);font-size:0.85rem;font-weight:700;">📋 Input Text</label>
+        <span id="charCount" style="color:var(--text-muted);font-size:0.78rem;font-weight:600;">0 chars</span>
+      </div>
+      <textarea id="sumInput" class="is-textarea" rows="9"
+        placeholder="Paste your text here — articles, research papers, notes, chapters..."
+        oninput="document.getElementById('charCount').textContent=this.value.length+' chars'"></textarea>
+      <div class="input-actions">
+        <button class="btn btn-success" onclick="callSummarize()" id="sumBtn">
+          <i class="fas fa-compress-alt me-2"></i>Summarize
+        </button>
+        <button class="btn btn-ghost" onclick="clearAll()"><i class="fas fa-times me-2"></i>Clear</button>
+      </div>
+    </div>
+
+    <div id="sumOutput" class="output-box hidden"></div>
+
+    <div id="sumActions" style="display:none;margin-top:12px;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="copyOutput()"><i class="fas fa-copy me-1"></i>Copy</button>
+      <a href="translate.html" class="btn btn-warning btn-sm"><i class="fas fa-language me-1"></i>Translate to Bangla</a>
+    </div>
+  </div>
 </div>
 
-<footer class="bg-primary text-white py-3 mt-5">
-    <div class="container1"><p class="mb-0">© 2025 IntelliStudy</p></div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">🧠 IntelliStudy</span>
+    <span class="footer-copy">© 2025 IntelliStudy</span>
+  </div>
 </footer>
 
-<script>
-const BASE_URL = "/api/gemini";
-
-async function callSummarize() {
-    const text = document.getElementById("summarizeInput").value;
-    const res = await fetch(`${BASE_URL}/summarize`, {
-        method: "POST",
-        headers: {"Content-Type": "text/plain"},
-        body: text
-    });
-    const data = await res.text();
-    document.getElementById("summarizeOutput").textContent = data;
-}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/summarize.js"></script>
 </body>
 </html>

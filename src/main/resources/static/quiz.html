@@ -1,105 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IntelliStudy - Quiz by Topic</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/quiz.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliStudy — Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .mode-tabs { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+    .mode-btn {
+      padding: 12px 24px; border-radius: 100px; border: 1.5px solid var(--border);
+      background: var(--bg-card); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1); font-family: var(--font-body); color: var(--text-secondary);
+    }
+    .mode-btn:hover { transform: translateY(-2px); border-color: var(--orange); color: var(--text-primary); }
+    .mode-btn.active { background: var(--grad-hero); color: white; border-color: transparent; box-shadow: 0 4px 16px rgba(255,107,53,0.3); }
+  </style>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary text-white fixed-top" style="height:80px;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">IntelliStudy</a>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="index.html">Ask</a></li>
-            <li class="nav-item"><a class="nav-link" href="summarize.html">Summarize</a></li>
-            <li class="nav-item"><a class="nav-link" href="translate.html">Translate</a></li>
-            <li class="nav-item"><a class="nav-link active" href="quiz.html">Quiz by Topic</a></li>
-            <li class="nav-item"><a class="nav-link" href="quiz-text.html">Quiz from Text</a></li>
-        </ul>
-    </div>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="brand-icon">🧠</span>IntelliStudy</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="rag.html" class="nav-link">PDF Chat</a></li>
+      <li><a href="summarize.html" class="nav-link">Summarize</a></li>
+      <li><a href="translate.html" class="nav-link">Translate</a></li>
+      <li><a href="quiz.html" class="nav-link active">Quiz</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
 </nav>
 
-<!-- Content -->
-<div class="container my-5">
-    <h1 class="text-center">Take a Quiz on Topic</h1>
-          
-    <!-- Left aligned quiz area -->
-    <div class="quiz-area">
-    <input type="text" id="quizInput" class="form-control mb-3" placeholder="Enter topic for quiz...">
-    <div class="text-center mb-3">
-        <button class="btn btn-info" onclick="loadQuiz()">Generate Quiz</button>
+<div class="container" style="padding-bottom:80px;">
+  <div class="page-header">
+    <div class="section-label">AI QUIZ GENERATOR</div>
+    <h1>Quiz Yourself 🎯</h1>
+    <p>Generate multiple-choice quizzes from a topic, your own text, or an uploaded PDF.</p>
+  </div>
+
+  <!-- MCP Panel -->
+  <div class="mcp-panel" style="max-width:720px;margin:0 auto 32px;">
+    <div class="mcp-header">
+      <span style="font-size:20px;">🔌</span>
+      <h3 style="font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;color:var(--purple);margin:0;">MCP: Quiz Builder</h3>
+      <span class="mcp-badge">ACTIVE</span>
+    </div>
+    <div class="mcp-tools">
+      <span class="mcp-tool-chip active"><i class="fas fa-bolt"></i> Topic → MCQ</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-file-alt"></i> Text → MCQ</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-file-pdf"></i> PDF → MCQ</span>
+      <span class="mcp-tool-chip"><i class="fas fa-check-double"></i> Auto Grader</span>
+    </div>
+    <div class="mcp-status"><span class="dot-green"></span>Gemini 2.5 Flash · JSON structured output · Auto answer validation</div>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-btn active" onclick="setMode('topic')" id="btn-topic">🎯 By Topic</button>
+    <button class="mode-btn" onclick="setMode('text')" id="btn-text">📝 From Text</button>
+    <button class="mode-btn" onclick="setMode('pdf')" id="btn-pdf">📄 From PDF</button>
+  </div>
+
+  <div style="max-width:720px;margin:0 auto;">
+
+    <div id="mode-topic">
+      <div class="input-card">
+        <label style="color:var(--text-secondary);font-size:0.85rem;font-weight:700;">📚 Enter a topic</label>
+        <input type="text" id="topicInput" class="is-input" placeholder="e.g. Photosynthesis, World War II, Algebra...">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <label style="color:var(--text-secondary);font-size:0.85rem;font-weight:600;">Questions:</label>
+          <select id="topicCount" class="is-select" style="width:auto;min-width:80px;">
+            <option value="5">5</option><option value="10">10</option><option value="15">15</option>
+          </select>
+          <button class="btn btn-primary" onclick="generateTopicQuiz()" id="topicBtn">
+            <i class="fas fa-bolt me-2"></i>Generate Quiz
+          </button>
+        </div>
+      </div>
     </div>
 
-    <form id="quizForm" class="quiz-container"></form>
-    <button class="btn btn-success mt-2" id="submitQuizBtn" onclick="submitQuiz()" style="display:none;">Submit Exam</button>
+    <div id="mode-text" style="display:none;">
+      <div class="input-card">
+        <label style="color:var(--text-secondary);font-size:0.85rem;font-weight:700;">📋 Paste your study text</label>
+        <textarea id="textInput" class="is-textarea" rows="7" placeholder="Paste any text and get a custom quiz generated from it..."></textarea>
+        <button class="btn btn-info" onclick="generateTextQuiz()" id="textBtn">
+          <i class="fas fa-magic me-2"></i>Generate Quiz from Text
+        </button>
+      </div>
+    </div>
 
-    <!-- Result box always visible -->
-    <pre id="quizResult">Your score will appear here</pre>
-</div>
+    <div id="mode-pdf" style="display:none;">
+      <div class="input-card">
+        <div class="info-banner">
+          <i class="fas fa-info-circle"></i>
+          Uses the PDF loaded in <a href="rag.html">PDF Chat →</a>. Upload there first.
+        </div>
+        <div id="pdfModeStatus" style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px;">Checking for loaded PDF...</div>
+        <button class="btn btn-primary" onclick="generatePdfQuiz()" id="pdfBtn" style="display:none;">
+          <i class="fas fa-file-pdf me-2"></i>Generate Quiz from PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="quizLoading" style="display:none;text-align:center;padding:48px;color:var(--text-secondary);">
+      <div class="spinner" style="width:32px;height:32px;margin:0 auto 16px;border-width:3px;border-top-color:var(--orange);border-color:rgba(255,107,53,0.2);border-top-color:var(--orange);"></div>
+      <div style="font-weight:700;font-family:'Nunito',sans-serif;">Generating your quiz... ✨</div>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quizContainer" style="margin-top:28px;display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;color:var(--text-primary);">Your Quiz 🎉</h3>
+        <button class="btn btn-ghost btn-sm" onclick="resetQuiz()"><i class="fas fa-redo me-1"></i>New Quiz</button>
+      </div>
+      <div id="quizQuestions"></div>
+      <button class="btn btn-success btn-lg" onclick="submitQuiz()" id="submitBtn" style="width:100%;margin-top:8px;border-radius:16px;">
+        <i class="fas fa-check me-2"></i>Submit & See Score
+      </button>
+      <div id="scoreCard"></div>
+    </div>
+
+  </div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-primary text-white py-3 mt-5">
-    <div class="container1"><p class="mb-0">© 2025 IntelliStudy</p></div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">🧠 IntelliStudy</span>
+    <span class="footer-copy">© 2025 IntelliStudy</span>
+  </div>
 </footer>
 
+<script src="js/app.js"></script>
+<script src="js/quiz.js"></script>
 <script>
-const BASE_URL = "/api/gemini";
-let currentQuiz = [];
+// ==================== FIXED JS ====================
+let currentQuiz = [], submitted = false;
 
-async function loadQuiz() {
-    const topic = document.getElementById("quizInput").value;
-    const res = await fetch(`${BASE_URL}/quiz/topic-json`, {
-        method: "POST",
-        headers: {"Content-Type": "text/plain"},
-        body: topic
-    });
-    const text = await res.text();
-    let data = [];
-    try { data = JSON.parse(text); } 
-    catch(e) {
-        const start = text.indexOf('[');
-        const end = text.lastIndexOf(']');
-        if(start !== -1 && end !== -1) data = JSON.parse(text.substring(start, end+1));
-        else { alert("Failed to generate quiz."); return; }
-    }
-    currentQuiz = data;
-    renderQuiz(currentQuiz, "quizForm", "q", "submitQuizBtn", "quizResult");
+function setMode(mode) {
+  ['topic','text','pdf'].forEach(m => {
+    document.getElementById('mode-'+m).style.display = m===mode ? 'block' : 'none';
+    document.getElementById('btn-'+m).classList.toggle('active', m===mode);
+  });
+  if (mode === 'pdf') checkPdfStatus();
+  resetQuiz(false);
 }
 
-function renderQuiz(quizData, formId, prefix, submitBtnId, resultId) {
-    const form = document.getElementById(formId);
-    form.innerHTML = "";
-    quizData.forEach((q,i)=>{
-        const div = document.createElement("div");
-        div.classList.add("mb-3");
-        div.innerHTML = `<p><strong>${i+1}. ${q.question}</strong></p>`;
-        q.options.forEach(opt=>{
-            div.innerHTML += `<div class="form-check">
-                <input class="form-check-input" type="radio" name="${prefix}${i}" value="${opt}" id="${prefix}${i}-${opt}">
-                <label class="form-check-label" for="${prefix}${i}-${opt}">${opt}</label>
-            </div>`;
-        });
-        form.appendChild(div);
+async function generateTopicQuiz() {
+  const topic = document.getElementById('topicInput').value.trim();
+  if (!topic) return;
+  setLoading('topicBtn', true);
+  try {
+    const res = await fetch('/api/gemini/quiz/topic-json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: topic
     });
-    document.getElementById(submitBtnId).style.display="inline-block";
-    document.getElementById(resultId).textContent="";
+    const api = await res.json();
+    const quizData = typeof api.data === 'string' ? JSON.parse(api.data) : api.data;
+    renderQuiz(quizData);
+  } catch(e) { alert('Failed to generate quiz'); }
+  setLoading('topicBtn', false);
+}
+
+async function generateTextQuiz() {
+  const text = document.getElementById('textInput').value.trim();
+  if (!text) return;
+  setLoading('textBtn', true);
+  try {
+    const res = await fetch('/api/gemini/quiz/text-json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: text
+    });
+    const api = await res.json();
+    const quizData = typeof api.data === 'string' ? JSON.parse(api.data) : api.data;
+    renderQuiz(quizData);
+  } catch(e) { alert('Failed to generate quiz'); }
+  setLoading('textBtn', false);
+}
+
+async function generatePdfQuiz() {
+  setLoading('pdfBtn', true);
+  try {
+    const res = await fetch('/api/rag/quiz', { method: 'POST' });
+    const api = await res.json();
+    const quizData = typeof api.data === 'string' ? JSON.parse(api.data) : api.data;
+    renderQuiz(quizData);
+  } catch(e) { alert('Failed'); }
+  setLoading('pdfBtn', false);
+}
+
+function renderQuiz(data) {
+  currentQuiz = data; submitted = false;
+  document.getElementById('quizContainer').style.display = 'block';
+  document.getElementById('submitBtn').style.display = 'block';
+  document.getElementById('scoreCard').innerHTML = '';
+
+  const qDiv = document.getElementById('quizQuestions');
+  qDiv.innerHTML = '';
+  data.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card'; card.id = `qcard-${i}`;
+    card.innerHTML = `
+      <div class="quiz-q-num">Question ${i+1} of ${data.length}</div>
+      <div class="quiz-question">${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map(opt => `
+          <div class="quiz-option" data-opt="${opt.replace(/"/g,'&quot;')}" onclick="selectOpt(this,${i})">
+            <input type="radio" name="q${i}" value="${opt.replace(/"/g,'&quot;')}">
+            <label>${opt}</label>
+          </div>`).join('')}
+      </div>`;
+    qDiv.appendChild(card);
+  });
+}
+
+function selectOpt(el, qi) {
+  document.querySelectorAll(`#qcard-${qi} .quiz-option`).forEach(o => o.style.background = '');
+  el.querySelector('input').checked = true;
+  el.style.background = 'rgba(255,107,53,0.06)';
 }
 
 function submitQuiz() {
-    let score = 0;
-    currentQuiz.forEach((q,i)=>{
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        if(selected && selected.value === q.answer) score++;
+  if (submitted) return; submitted = true;
+  let score = 0;
+  currentQuiz.forEach((q, i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    document.querySelectorAll(`#qcard-${i} .quiz-option`).forEach(opt => {
+      const val = opt.dataset.opt;
+      if (val === q.answer) opt.classList.add('correct');
+      else if (selected && selected.value === val) opt.classList.add('wrong');
     });
-    document.getElementById("quizResult").textContent = `Your score: ${score} / ${currentQuiz.length}`;
+    if (selected && selected.value === q.answer) score++;
+  });
+  const pct = Math.round((score / currentQuiz.length) * 100);
+  const msg = pct >= 80 ? '🎉 Excellent!' : pct >= 50 ? '👍 Good effort!' : '📚 Keep studying!';
+  document.getElementById('scoreCard').innerHTML = `
+    <div class="score-card">
+      <div class="score-num">${score}<span style="font-size:2.2rem;color:var(--text-muted)">/${currentQuiz.length}</span></div>
+      <div class="score-label">${msg} You scored <strong>${pct}%</strong></div>
+    </div>`;
+  document.getElementById('submitBtn').style.display = 'none';
+}
+
+function resetQuiz(scroll = true) {
+  currentQuiz = []; submitted = false;
+  document.getElementById('quizContainer').style.display = 'none';
+  document.getElementById('quizQuestions').innerHTML = '';
+  document.getElementById('scoreCard').innerHTML = '';
+}
+
+function setLoading(id, on) {
+  const btn = document.getElementById(id);
+  document.getElementById('quizLoading').style.display = on ? 'block' : 'none';
+  if (on) { btn.disabled = true; btn.style.opacity = '0.7'; }
+  else { btn.disabled = false; btn.style.opacity = '1'; }
 }
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

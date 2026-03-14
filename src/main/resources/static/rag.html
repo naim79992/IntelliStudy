@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliStudy — PDF Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="brand-icon">🧠</span>IntelliStudy</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="rag.html" class="nav-link active">PDF Chat</a></li>
+      <li><a href="summarize.html" class="nav-link">Summarize</a></li>
+      <li><a href="translate.html" class="nav-link">Translate</a></li>
+      <li><a href="quiz.html" class="nav-link">Quiz</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="container" style="padding-bottom:80px;">
+  <div class="page-header">
+    <div class="section-label">PDF CHAT · RAG</div>
+    <h1>Chat with Your PDF 📄</h1>
+    <p>Upload any document, then ask questions, get summaries, or generate quizzes — AI finds the right context.</p>
+  </div>
+
+  <!-- MCP Panel -->
+  <div class="mcp-panel" style="margin-bottom:24px;">
+    <div class="mcp-header">
+      <div style="width:36px;height:36px;background:var(--grad-purple);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(124,58,237,0.3);">🔌</div>
+      <h3 class="mcp-header" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;color:var(--purple);margin:0;">MCP Tools Active</h3>
+      <span class="mcp-badge">LIVE</span>
+    </div>
+    <div class="mcp-tools">
+      <span class="mcp-tool-chip active"><i class="fas fa-file-pdf"></i> Document Reader</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-search"></i> Semantic Search</span>
+      <span class="mcp-tool-chip"><i class="fas fa-compress-alt"></i> Summarizer</span>
+      <span class="mcp-tool-chip"><i class="fas fa-question-circle"></i> Quiz Builder</span>
+    </div>
+    <div class="mcp-status"><span class="dot-green"></span>BM25 retrieval · Top-4 chunk scoring · Session memory enabled</div>
+  </div>
+
+  <div class="chat-layout" id="chatLayout">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--text-primary);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-folder-open" style="color:var(--orange);"></i> Your Document
+      </div>
+
+      <div id="uploadZoneWrap">
+        <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h6>Drop PDF here</h6>
+          <p>Click to choose a .pdf file</p>
+        </div>
+        <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handleFileSelect(this)">
+        <div id="fileInfo" style="display:none;margin-top:14px;">
+          <div class="pdf-badge" style="margin-bottom:12px;"><i class="fas fa-file-pdf"></i><span id="fileName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;display:inline-block;vertical-align:middle;"></span></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="uploadPdf()" id="uploadBtn"><i class="fas fa-upload me-2"></i>Process PDF</button>
+        </div>
+        <div id="uploadStatus"></div>
+      </div>
+
+      <div id="loadedActions" style="display:none;">
+        <div class="alert alert-success" style="margin-bottom:16px;font-size:0.82rem;border-radius:12px;">
+          <i class="fas fa-check-circle me-1"></i> PDF Ready to Chat!
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-success btn-sm" onclick="summarizePdf()" style="justify-content:flex-start;border-radius:12px;">
+            <i class="fas fa-compress-alt me-2"></i>Summarize PDF
+          </button>
+          <button class="btn btn-purple btn-sm" onclick="generateQuiz()" style="justify-content:flex-start;border-radius:12px;">
+            <i class="fas fa-question-circle me-2"></i>Generate Quiz
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="clearPdf()" style="justify-content:flex-start;border-radius:12px;margin-top:6px;">
+            <i class="fas fa-trash me-2"></i>Remove PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Memory Status -->
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+        <div style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(236,72,153,0.06));border:1.5px solid rgba(124,58,237,0.15);border-radius:14px;padding:14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="font-size:16px;">🧠</span>
+            <span style="font-weight:800;font-size:0.82rem;color:var(--purple);font-family:'Nunito',sans-serif;">Conversation Memory</span>
+          </div>
+          <div id="memoryStatus" style="font-size:0.78rem;color:var(--text-muted);line-height:1.6;">
+            <span class="dot-green" style="display:inline-block;"></span> MySQL DB connected<br>
+            <span id="msgCount" style="color:var(--text-secondary);font-weight:600;">No messages yet</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="clearHistory()" id="clearHistoryBtn"
+            style="width:100%;margin-top:10px;font-size:0.78rem;border-radius:10px;display:none;">
+            <i class="fas fa-eraser me-1"></i>Clear Memory
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.8;">
+          <strong style="color:var(--text-secondary);display:block;margin-bottom:6px;font-weight:800;">💡 Pro Tips</strong>
+          • Ask follow-up questions — AI remembers!<br>• "Explain more about that"<br>• "Give me an example"<br>• "What did you say about X?"
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Main -->
+    <div class="chat-main" id="chatMain">
+      <div class="chat-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:11px;height:11px;border-radius:50%;background:var(--border);transition:background 0.3s;" id="statusDot"></div>
+          <span style="font-weight:700;font-size:0.9rem;font-family:'Nunito',sans-serif;" id="chatStatus">Upload a PDF to start chatting</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearMessages()"><i class="fas fa-broom me-1"></i>Clear</button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div style="text-align:center;margin:auto;color:var(--text-muted);padding:40px 20px;" id="emptyState">
+          <div style="font-size:56px;margin-bottom:16px;">📄</div>
+          <div style="font-weight:800;color:var(--text-secondary);margin-bottom:8px;font-family:'Nunito',sans-serif;font-size:1.1rem;">No PDF Loaded Yet</div>
+          <div style="font-size:0.85rem;">Upload a PDF from the sidebar to begin chatting</div>
+        </div>
+      </div>
+      <div class="chat-input-bar" id="chatInputBar">
+        <input type="text" class="is-input" id="questionInput" placeholder="Ask anything about your PDF..." onkeydown="if(event.key==='Enter')askQuestion()" disabled>
+        <button class="btn btn-primary" onclick="askQuestion()" id="askBtn" disabled style="border-radius:100px;padding:11px 18px;">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">🧠 IntelliStudy</span>
+    <span class="footer-copy">© 2025 IntelliStudy — Built with Gemini AI + MCP</span>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/rag.js"></script>
+</body>
+</html>

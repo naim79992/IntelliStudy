@@ -1,54 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IntelliStudy - Translate</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/translate.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliStudy — Translate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .translate-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: start; }
+    .lang-label { font-size: 0.78rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+    .translate-arrow { display: flex; align-items: flex-start; justify-content: center; padding-top: 36px; }
+    .arrow-btn {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--grad-hero); border: none;
+      display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
+      cursor: pointer; box-shadow: 0 4px 14px rgba(255,107,53,0.3); transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .arrow-btn:hover { transform: scale(1.1); }
+    .output-panel {
+      background: var(--bg-warm); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+      padding: 14px 16px; min-height: 236px; font-size: 1rem; line-height: 1.8;
+      color: var(--text-muted); white-space: pre-wrap; word-break: break-word;
+    }
+    .output-panel.has-text { color: var(--text-primary); border-color: rgba(255,107,53,0.25); background: white; }
+    @media(max-width:620px) { .translate-grid{grid-template-columns:1fr;} .translate-arrow{padding:0;} .arrow-btn{transform:rotate(90deg);} }
+  </style>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary text-white fixed-top" style="height:80px;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">IntelliStudy</a>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="index.html">Ask</a></li>
-                <li class="nav-item"><a class="nav-link" href="summarize.html">Summarize</a></li>
-                <li class="nav-item"><a class="nav-link active" href="translate.html">Translate</a></li>
-                <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz by Topic</a></li>
-                <li class="nav-item"><a class="nav-link" href="quiz-text.html">Quiz from Text</a></li>
-        </ul>
-    </div>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="brand-icon">🧠</span>IntelliStudy</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="rag.html" class="nav-link">PDF Chat</a></li>
+      <li><a href="summarize.html" class="nav-link">Summarize</a></li>
+      <li><a href="translate.html" class="nav-link active">Translate</a></li>
+      <li><a href="quiz.html" class="nav-link">Quiz</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
 </nav>
 
-<div class="container my-5">
-    <h1 class="mb-4 text-center">Translate Text to Bangla</h1>
-    <textarea id="translateInput" class="form-control mb-3" rows="5" placeholder="Enter text to translate..."></textarea>
-    <button class="btn btn-warning" onclick="callTranslate()">Translate</button>
-    <pre class="mt-3" id="translateOutput"></pre>
+<div class="container" style="padding-bottom:80px;">
+  <div class="page-header">
+    <div class="section-label">AI TOOL</div>
+    <h1>Translate to Bangla 🌐</h1>
+    <p>Instantly translate any English text into fluent, natural Bangla.</p>
+  </div>
+
+  <!-- MCP Panel -->
+  <div class="mcp-panel" style="max-width:920px;margin:0 auto 28px;">
+    <div class="mcp-header">
+      <span style="font-size:18px;">🔌</span>
+      <h3 style="font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;color:var(--purple);margin:0;">MCP: Translation Tool</h3>
+      <span class="mcp-badge">ACTIVE</span>
+    </div>
+    <div class="mcp-tools">
+      <span class="mcp-tool-chip active">🇬🇧 English Input</span>
+      <span class="mcp-tool-chip active">🇧🇩 Bangla Output</span>
+      <span class="mcp-tool-chip active"><i class="fas fa-magic"></i> Natural Tone</span>
+    </div>
+    <div class="mcp-status"><span class="dot-green"></span>Gemini 2.5 Flash · Fluent natural Bangla · Preserves original meaning</div>
+  </div>
+
+  <div style="max-width:920px;margin:0 auto;">
+    <div class="translate-grid">
+      <div>
+        <div class="lang-label" style="color:var(--blue);">🇬🇧 English</div>
+        <div class="input-card" style="padding:16px;">
+          <textarea id="translateInput" class="is-textarea" rows="10" style="border:none;background:transparent;padding:4px 0;" placeholder="Type or paste English text here..."></textarea>
+        </div>
+      </div>
+
+      <div class="translate-arrow">
+        <button class="arrow-btn" onclick="callTranslate()" title="Translate"><i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div class="lang-label" style="color:var(--orange);margin-bottom:0;">🇧🇩 বাংলা</div>
+          <button class="btn btn-ghost btn-sm" onclick="copyTranslation()" id="copyBtn" style="display:none"><i class="fas fa-copy me-1"></i>Copy</button>
+        </div>
+        <div id="translateOutput" class="output-panel">Translation will appear here...</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-warning btn-lg" onclick="callTranslate()" id="transBtn">
+        <i class="fas fa-language me-2"></i>Translate Now
+      </button>
+      <button class="btn btn-ghost" onclick="clearAll()"><i class="fas fa-times me-2"></i>Clear</button>
+    </div>
+  </div>
 </div>
 
-<footer class="bg-primary text-white py-3 mt-5">
-    <div class="container1"><p class="mb-0">© 2025 IntelliStudy</p></div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">🧠 IntelliStudy</span>
+    <span class="footer-copy">© 2025 IntelliStudy</span>
+  </div>
 </footer>
 
-<script>
-const BASE_URL = "/api/gemini";
-
-async function callTranslate() {
-    const text = document.getElementById("translateInput").value;
-    const res = await fetch(`${BASE_URL}/translate`, {
-        method: "POST",
-        headers: {"Content-Type": "text/plain"},
-        body: text
-    });
-    const data = await res.text();
-    document.getElementById("translateOutput").textContent = data;
-}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/translate.js"></script>
 </body>
 </html>
