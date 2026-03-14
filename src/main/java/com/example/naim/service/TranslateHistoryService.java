@@ -3,7 +3,6 @@ package com.example.naim.service;
 
 import com.example.naim.model.TranslateHistory;
 import com.example.naim.repository.TranslateHistoryRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

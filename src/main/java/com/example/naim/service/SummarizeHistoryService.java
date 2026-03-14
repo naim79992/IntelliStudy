@@ -2,7 +2,6 @@ package com.example.naim.service;
 
 import com.example.naim.model.SummarizeHistory;
 import com.example.naim.repository.SummarizeHistoryRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
