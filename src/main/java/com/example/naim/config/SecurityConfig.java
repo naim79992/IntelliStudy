@@ -9,6 +9,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import lombok.RequiredArgsConstructor;
 import com.example.naim.security.JwtAuthenticationFilter;
 import com.example.naim.security.CustomOAuth2UserService;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -29,9 +33,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+            new RequestAttributeSecurityContextRepository(),
+            new HttpSessionSecurityContextRepository()
+        );
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+            .securityContext(context -> context.securityContextRepository(securityContextRepository()))
             .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -41,7 +54,7 @@ public class SecurityConfig {
                     "/favicon.ico", "/webjars/**",
                     "/oauth2/**",
                     "/login/oauth2/**",
-                    "/api/auth/**"
+                    "/api/auth/login", "/api/auth/signup", "/api/auth/verify", "/api/auth/status"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

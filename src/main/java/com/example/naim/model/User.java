@@ -26,4 +26,11 @@ public class User extends BaseEntity {
 
     @Column(name = "picture_url")
     private String pictureUrl;
+
+    @Column(name = "enabled")
+    @Builder.Default
+    private boolean enabled = false;
+
+    @Column(name = "verification_token")
+    private String verificationToken;
 }

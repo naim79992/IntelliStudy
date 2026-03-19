@@ -46,8 +46,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .pictureUrl(picture)
                     .provider(provider)
                     .providerId(providerId)
+                    .enabled(true)
                     .build();
         }
+        user.setEnabled(true); // Always enable if logged in via OAuth2
         userRepository.save(user);
 
         return new UserPrincipal(user, oAuth2User.getAttributes());
