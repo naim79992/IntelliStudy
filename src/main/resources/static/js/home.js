@@ -47,8 +47,8 @@
   try {
     const res = await fetch('/api/gemini/ask', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: input
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: input })
     });
     const api = await res.json();
     

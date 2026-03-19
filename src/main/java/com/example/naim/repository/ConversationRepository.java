@@ -1,6 +1,7 @@
 package com.example.naim.repository;
 
 import com.example.naim.model.ConversationMessage;
+import com.example.naim.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -47,4 +48,35 @@ public interface ConversationRepository extends JpaRepository<ConversationMessag
     @Modifying
     @Transactional
     void deleteBySessionId(String sessionId);
+
+    @Query(value = """
+        SELECT * FROM (
+            SELECT * FROM conversation_messages
+            WHERE user_id = :#{#user.id} AND feature = :feature
+            ORDER BY created_at DESC
+            LIMIT :limit
+        ) sub ORDER BY created_at ASC
+        """, nativeQuery = true)
+    List<ConversationMessage> findRecentByUser(
+        @Param("user") User user,
+        @Param("feature") String feature,
+        @Param("limit") int limit
+    );
+
+    /** Count messages for a user/feature (used for stats). */
+    long countByUserAndFeature(User user, String feature);
+
+    /** Clear all messages for a user+feature. */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ConversationMessage m WHERE m.user = :user AND m.feature = :feature")
+    void deleteByUserAndFeature(
+        @Param("user") User user,
+        @Param("feature") String feature
+    );
+
+    /** Clear entire user's messages (all features). */
+    @Modifying
+    @Transactional
+    void deleteByUser(User user);
 }

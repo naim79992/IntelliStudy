@@ -2,6 +2,7 @@ package com.example.naim.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 /**
@@ -19,14 +20,14 @@ import java.time.LocalDateTime;
            @Index(name = "idx_session_feature", columnList = "session_id, feature"),
            @Index(name = "idx_created_at",      columnList = "created_at")
        })
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class ConversationMessage {
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder
+public class ConversationMessage extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "session_id", nullable = false, length = 128)
+    @Column(name = "session_id", nullable = true, length = 128)
     private String sessionId;
 
     /**
@@ -45,11 +46,4 @@ public class ConversationMessage {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
-    }
 }

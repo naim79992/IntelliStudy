@@ -2,19 +2,20 @@ package com.example.naim.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "summarize_history",
        indexes = @Index(name = "idx_sum_session", columnList = "session_id"))
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class SummarizeHistory {
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder
+public class SummarizeHistory extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "session_id", nullable = false, length = 128)
+    @Column(name = "session_id", nullable = true, length = 128)
     private String sessionId;
 
     @Column(nullable = false, columnDefinition = "LONGTEXT")
@@ -26,12 +27,8 @@ public class SummarizeHistory {
     @Column(name = "char_count")
     private Integer charCount;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
+    protected void onCreate() {
         if (charCount == null && inputText != null) charCount = inputText.length();
     }
 }

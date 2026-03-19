@@ -8,8 +8,8 @@ async function callTranslate() {
     try {
         const res = await fetch('/api/gemini/translate', {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: text
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text })
         });
         const api = await res.json();
         const out = document.getElementById('translateOutput');
@@ -24,28 +24,7 @@ async function callTranslate() {
 
 
 
-async function callTranslate() {
-  const text = document.getElementById('translateInput').value.trim();
-  if (!text) return;
-  const btn = document.getElementById('transBtn');
-  btn.innerHTML = '<span class="spinner"></span> Translating...'; btn.disabled = true;
 
-  try {
-    const res = await fetch('/api/gemini/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: text
-    });
-    const api = await res.json();
-    const out = document.getElementById('translateOutput');
-    out.textContent = api.success ? api.data : '❌ ' + (api.message || 'Error');
-    out.classList.add('has-text');
-    document.getElementById('copyBtn').style.display = 'inline-flex';
-  } catch(e) {
-    document.getElementById('translateOutput').textContent = '❌ Failed';
-  }
-  btn.innerHTML = '<i class="fas fa-language me-2"></i>Translate Now'; btn.disabled = false;
-}
 function clearAll() {
   document.getElementById('translateInput').value = '';
   const out = document.getElementById('translateOutput');

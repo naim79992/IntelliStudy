@@ -1,0 +1,83 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.example:example >-------------------------
+[INFO] Building IntelliStudy 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ example ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 15 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ example ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 61 source files with javac [debug parameters release 21] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/model/TranslateHistory.java:[22,20] @SuperBuilder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/model/TranslateHistory.java:[25,20] @SuperBuilder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[INFO] 2 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/controller/GeminiController.java:[128,100] cannot find symbol
+  symbol:   method fromValue(java.lang.String)
+  location: class com.example.naim.enums.FeatureEnum
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[47,38] cannot find symbol
+  symbol:   method findRecentByUser(com.example.naim.model.User,java.lang.String,int)
+  location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[63,42] cannot find symbol
+  symbol:   method countByUserAndFeature(com.example.naim.model.User,java.lang.String)
+  location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[73,46] cannot find symbol
+  symbol:   method findRecentByUser(com.example.naim.model.User,java.lang.String,int)
+  location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[106,35] cannot find symbol
+  symbol:   method deleteByUserAndFeature(com.example.naim.model.User,java.lang.String)
+  location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[118,35] cannot find symbol
+  symbol:   method deleteByUser(com.example.naim.model.User)
+  location: variable repo of type com.example.naim.repository.ConversationRepository
+[INFO] 6 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  22.154 s
+[INFO] Finished at: 2026-03-19T14:00:46+06:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project example: Compilation failure: Compilation failure: 
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/controller/GeminiController.java:[128,100] cannot find symbol
+[ERROR]   symbol:   method fromValue(java.lang.String)
+[ERROR]   location: class com.example.naim.enums.FeatureEnum
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[47,38] cannot find symbol
+[ERROR]   symbol:   method findRecentByUser(com.example.naim.model.User,java.lang.String,int)
+[ERROR]   location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[63,42] cannot find symbol
+[ERROR]   symbol:   method countByUserAndFeature(com.example.naim.model.User,java.lang.String)
+[ERROR]   location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[73,46] cannot find symbol
+[ERROR]   symbol:   method findRecentByUser(com.example.naim.model.User,java.lang.String,int)
+[ERROR]   location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[106,35] cannot find symbol
+[ERROR]   symbol:   method deleteByUserAndFeature(com.example.naim.model.User,java.lang.String)
+[ERROR]   location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] /D:/Development(D)/Projects/v2/IntelliStudy/src/main/java/com/example/naim/service/impl/ConversationServiceImpl.java:[118,35] cannot find symbol
+[ERROR]   symbol:   method deleteByUser(com.example.naim.model.User)
+[ERROR]   location: variable repo of type com.example.naim.repository.ConversationRepository
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

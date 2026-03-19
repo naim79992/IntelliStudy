@@ -21,9 +21,8 @@ public class GeminiServiceImpl implements AiService {
     @Override
     public String summarizeText(String text) {
         String prompt = """
-            Summarize within 100 tokens. You are an expert academic assistant. Summarize the following text clearly and concisely.
-            Use bullet points for key points, then write a 2-3 sentence overall conclusion.
-            Be accurate and do not add information not present in the text.
+            Summarize the following text in under 50 words (approximately 10-15% of the original length).
+            Be extremely concise. Use bullet points if necessary.
             TEXT:
             %s
             """.formatted(text);
@@ -126,13 +125,32 @@ public class GeminiServiceImpl implements AiService {
     }
 
     @Override
+    public String generateResponseWithHistory(String historyBlock, String question) {
+        String historySection = historyBlock.isBlank() ? "" : """
+            CONVERSATION HISTORY (previous Q&A in this session):
+            %s
+            """.formatted(historyBlock);
+        String prompt = """
+            You are a helpful, intelligent AI assistant.
+            Instructions:
+            - Answer the question accurately.
+            - If it is a follow-up question, use the history below for context.
+            - Format your answer clearly with markdown.
+            %s
+            QUESTION: %s
+            ANSWER:
+            """.formatted(historySection, question);
+        return generateResponse(prompt);
+    }
+
+    @Override
     public String summarizePdf(String pdfText) {
         String prompt = """
-            You are a document analyst. Provide a comprehensive summary of the following document.
-            Structure your summary as:
-            1. **Overview** (2-3 sentences about what the document is about)
-            2. **Key Points** (bullet list of the most important information)
-            3. **Conclusion** (1-2 sentences on the overall message or findings)
+            You are a document analyst. Provide a brief, high-level summary of the following document.
+            Strictly limit the summary to 150 words total.
+            Structure:
+            1. **Overall Conclusion** (1-2 sentences)
+            2. **Key Takeaways** (3-5 short bullet points)
             DOCUMENT TEXT:
             %s
             """.formatted(pdfText);

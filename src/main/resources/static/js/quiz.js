@@ -15,7 +15,11 @@ async function generateTopicQuiz() {
     if (!topic) return;
     setLoading('topicBtn', true);
     try {
-        const res = await fetch('/api/gemini/quiz/topic-json', { method: 'POST', headers: {'Content-Type':'text/plain'}, body: topic });
+        const res = await fetch('/api/gemini/quiz', { 
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'}, 
+            body: JSON.stringify({ topic: topic }) 
+        });
         const api = await res.json();
         const quizData = typeof api.data === 'string' ? JSON.parse(api.data) : api.data;
         renderQuiz(quizData);
@@ -28,7 +32,11 @@ async function generateTextQuiz() {
     if (!text) return;
     setLoading('textBtn', true);
     try {
-        const res = await fetch('/api/gemini/quiz/text-json', { method: 'POST', headers: {'Content-Type':'text/plain'}, body: text });
+        const res = await fetch('/api/gemini/quiz', { 
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'}, 
+            body: JSON.stringify({ text: text }) 
+        });
         const api = await res.json();
         const quizData = typeof api.data === 'string' ? JSON.parse(api.data) : api.data;
         renderQuiz(quizData);

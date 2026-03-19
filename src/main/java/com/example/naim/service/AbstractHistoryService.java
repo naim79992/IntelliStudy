@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.naim.model.User;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public abstract class AbstractHistoryService<T, ID> {
     protected final String prefix;
     protected final Duration ttl;
 
-    public abstract T saveEntity(String sessionId, Object... params);
+    public abstract T saveEntity(User user, String sessionId, Object... params);
 
     protected void cacheLast(String sessionId, String value) {
         try {
@@ -34,17 +35,18 @@ public abstract class AbstractHistoryService<T, ID> {
         } catch (Exception e) { return Optional.empty(); }
     }
 
-    public abstract List<T> getHistory(String sessionId);
+    public abstract List<T> getHistory(User user, String sessionId);
 
-    public abstract long getCount(String sessionId);
+    public abstract long getCount(User user, String sessionId);
 
     @Transactional
-    public void clearHistory(String sessionId) {
+    public void clearHistory(User user, String sessionId) {
         try {
-            redis.delete(prefix + ":" + sessionId + ":last");
+            String cacheKey = (user != null) ? user.getId().toString() : sessionId;
+            redis.delete(prefix + ":" + cacheKey + ":last");
         } catch (Exception e) { }
-        deleteBySessionId(sessionId); // Call abstract method for specific delete
+        deleteByUserOrSession(user, sessionId); 
     }
 
-    protected abstract void deleteBySessionId(String sessionId);
+    protected abstract void deleteByUserOrSession(User user, String sessionId);
 }

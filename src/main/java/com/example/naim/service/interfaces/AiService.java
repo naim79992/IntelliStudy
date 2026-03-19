@@ -8,6 +8,7 @@ public interface AiService {
     String generateQuizJsonWithHistory(String historyBlock, String topic);
     String generateQuizFromText(String text);
     String askWithContextAndHistory(String context, String historyBlock, String question);
+    String generateResponseWithHistory(String historyBlock, String question);
     String summarizePdf(String pdfText);
     // Add more as needed for extensibility
 }

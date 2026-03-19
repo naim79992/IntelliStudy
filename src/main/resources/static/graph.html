@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Graph — IntelliStudy</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
+        #cy { width: 100%; height: 100vh; display: block; background: #ffffff; }
+        .controls { position: absolute; top: 20px; left: 20px; z-index: 10; display: flex; flex-direction: column; gap: 10px; }
+        .btn-back { background: #1e293b; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .legend { position: absolute; bottom: 20px; right: 20px; background: white; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-size: 0.8rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .loading-overlay { position: fixed; inset: 0; background: white; z-index: 100; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s; }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+    <div style="text-align: center;">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; color: #64748b; font-weight: 600;">Loading Knowledge Graph...</p>
+    </div>
+</div>
+
+<div class="controls">
+    <a href="rag.html" class="btn-back">← Back to Chat</a>
+    <button class="btn btn-ghost" onclick="cy.layout({ name: 'cose', animate: true }).run()" style="background: white; border: 1.5px solid #e2e8f0;">Reset Layout</button>
+</div>
+
+<div id="cy"></div>
+
+<div class="legend">
+    <div style="font-weight: 800; margin-bottom: 8px; color: #1e293b;">Graph Legend</div>
+    <div class="legend-item"><span class="dot" style="background: #3b82f6;"></span> <span>Entity (Major)</span></div>
+    <div class="legend-item"><span class="dot" style="background: #8b5cf6;"></span> <span>Concept (General)</span></div>
+    <div class="legend-item"><div style="width: 20px; height: 2px; background: #cbd5e1;"></div> <span>Relationship</span></div>
+</div>
+
+<script>
+    let cy;
+
+    async function initGraph() {
+        try {
+            const res = await fetch('/api/cef/graph/nodes');
+            const apiNodes = await res.json();
+            const data = apiNodes.data;
+            
+            if (!data || data.length === 0) {
+                alert("No graph data found. Make sure you have uploaded a PDF first!");
+                window.location.href = 'rag.html';
+                return;
+            }
+
+            const elements = [];
+            const nodeIds = new Set();
+            data.forEach(n => {
+                if (!nodeIds.has(n.id)) {
+                    elements.push({
+                        data: { id: n.id, label: n.label, frequency: n.frequency, type: n.type }
+                    });
+                    nodeIds.add(n.id);
+                }
+            });
+
+            const edgeRes = await fetch('/api/cef/graph/edges');
+            const apiEdges = await edgeRes.json();
+            const edges = apiEdges.data;
+            
+            if (edges) {
+                edges.forEach(e => {
+                    if (nodeIds.has(e.fromId) && nodeIds.has(e.toId)) {
+                        elements.push({
+                            data: { source: e.fromId, target: e.toId, relation: e.relation }
+                        });
+                    }
+                });
+            }
+
+            cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'label': 'data(label)',
+                            'width': 'mapData(frequency, 1, 10, 30, 80)',
+                            'height': 'mapData(frequency, 1, 10, 30, 80)',
+                            'background-color': (n) => n.data('type').toUpperCase().includes('ENTITY') ? '#3b82f6' : '#8b5cf6',
+                            'color': '#1e293b',
+                            'font-size': '10px',
+                            'text-valign': 'bottom',
+                            'text-margin-y': '5px',
+                            'font-weight': '700'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': '#e2e8f0',
+                            'target-arrow-color': '#e2e8f0',
+                            'target-arrow-shape': 'triangle',
+                            'curve-style': 'bezier',
+                            'label': 'data(relation)',
+                            'font-size': '8px',
+                            'color': '#94a3b8',
+                            'text-rotation': 'autorotate'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'cose',
+                    animate: true,
+                    nodeRepulsion: 4000
+                }
+            });
+
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+
+        } catch (e) {
+            console.error(e);
+            alert("Error loading graph data.");
+        }
+    }
+
+    window.onload = initGraph;
+</script>
+
+</body>
+</html>

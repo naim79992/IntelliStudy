@@ -2,19 +2,20 @@ package com.example.naim.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "translate_history",
        indexes = @Index(name = "idx_trans_session", columnList = "session_id"))
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class TranslateHistory {
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder
+public class TranslateHistory extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "session_id", nullable = false, length = 128)
+    @Column(name = "session_id", nullable = true, length = 128)
     private String sessionId;
 
     @Column(name = "source_lang", length = 16)
@@ -29,11 +30,4 @@ public class TranslateHistory {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String translatedText;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
-    }
 }
