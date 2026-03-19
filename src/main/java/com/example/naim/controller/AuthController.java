@@ -4,10 +4,9 @@ import com.example.naim.model.User;
 import com.example.naim.repository.UserRepository;
 import com.example.naim.security.JwtUtils;
 import com.example.naim.security.UserPrincipal;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import com.example.naim.dto.LoginRequest;
+import com.example.naim.dto.SignupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -168,16 +167,4 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
-    static class LoginRequest {
-        private String email;
-        private String password;
-    }
-
-    @Data @NoArgsConstructor @AllArgsConstructor
-    static class SignupRequest {
-        private String email;
-        private String password;
-        private String fullName;
-    }
 }
