@@ -149,12 +149,22 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
+        
+        // Invalidate Session
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
+
+        // Clear JWT Cookie
+        Cookie cookie = new Cookie("JWT-TOKEN", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
