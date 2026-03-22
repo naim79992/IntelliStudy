@@ -26,6 +26,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.example.naim.service.RefreshTokenService;
+import com.example.naim.model.RefreshToken;
 import java.util.UUID;
 import java.util.Optional;
 
@@ -42,6 +44,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final RefreshTokenService refreshTokenService;
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
     @PostMapping("/signup")
@@ -111,6 +114,8 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getUser().getId());
+
         // Add cookie for browser-based navigation
         Cookie cookie = new Cookie("JWT-TOKEN", jwt);
         cookie.setHttpOnly(true);
@@ -121,6 +126,7 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of(
                 "token", jwt,
+                "refreshToken", refreshToken.getToken(),
                 "email", userPrincipal.getUsername(),
                 "fullName", userPrincipal.getUser().getFullName(),
                 "picture", userPrincipal.getUser().getPictureUrl() != null ? userPrincipal.getUser().getPictureUrl() : ""
@@ -145,6 +151,23 @@ public class AuthController {
     @GetMapping("/status")
     public ResponseEntity<?> status(@AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(Map.of("authenticated", principal != null));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        String requestRefreshToken = request.get("refreshToken");
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getEmail());
+                    return ResponseEntity.ok(Map.of(
+                            "token", token,
+                            "refreshToken", requestRefreshToken
+                    ));
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
     }
 
     @PostMapping("/logout")

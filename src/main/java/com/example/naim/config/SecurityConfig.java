@@ -54,7 +54,7 @@ public class SecurityConfig {
                     "/favicon.ico", "/webjars/**",
                     "/oauth2/**",
                     "/login/oauth2/**",
-                    "/api/auth/login", "/api/auth/signup", "/api/auth/verify", "/api/auth/status"
+                    "/api/auth/login", "/api/auth/signup", "/api/auth/verify", "/api/auth/status", "/api/auth/refresh-token"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
