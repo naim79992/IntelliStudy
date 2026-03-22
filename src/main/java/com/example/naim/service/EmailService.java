@@ -16,9 +16,12 @@ public class EmailService {
     @org.springframework.beans.factory.annotation.Value("${spring.mail.from}")
     private String fromEmail;
 
+    @org.springframework.beans.factory.annotation.Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
+
     public void sendVerificationEmail(String to, String token) {
         String subject = "Verify your email - IntelliStudy";
-        String verificationUrl = "http://localhost:8080/api/auth/verify?token=" + token;
+        String verificationUrl = baseUrl + "/api/auth/verify?token=" + token;
         
         log.info("Sending verification email to {}. Link: {}", to, verificationUrl);
         

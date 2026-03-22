@@ -1,17 +1,23 @@
-# Use OpenJDK 17
-FROM eclipse-temurin:17-jdk-alpine
-
-# Set working directory
+# --- Build Stage ---
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copy Maven build JAR into container
-COPY target/example-0.0.1-SNAPSHOT.jar app.jar
+# Copy pom.xml and source code
+COPY pom.xml .
+COPY src ./src
 
-# Expose Spring Boot port
+# Build the application
+RUN mvn clean package -DskipTests
+
+# --- Runtime Stage ---
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+
+# Copy the built JAR from the build stage
+COPY --from=build /app/target/example-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose port
 EXPOSE 8080
 
-# Set environment variable (Gemini API key)
-ENV GEMINI_API_KEY=${GEMINI_API_KEY}
-
-# Run the Spring Boot app
+# Environment variables will be passed via docker-compose or .env
 ENTRYPOINT ["java", "-jar", "app.jar"]
